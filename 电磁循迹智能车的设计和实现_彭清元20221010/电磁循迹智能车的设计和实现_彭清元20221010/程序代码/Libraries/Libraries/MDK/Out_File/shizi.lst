@@ -1,0 +1,78 @@
+C251 COMPILER V5.60.0,  shizi                                                              07/10/22  19:46:42  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE shizi
+OBJECT MODULE PLACED IN .\Out_File\shizi.obj
+COMPILER INVOKED BY: D:\Keil_v5\C251\BIN\C251.EXE shizi.c XSMALL INTR2 WARNINGLEVEL(3) BROWSE INCDIR(..\..\Libraries\lib
+                    -raries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRI
+                    -NT(.\Out_File\shizi.lst) TABS(2) OBJECT(.\Out_File\shizi.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          #include "shizi.h"
+    3          
+    4          int shizi = 0;
+    5          int enter_shizi = 0;
+    6          int leave_shizi = 0;
+    7          int shizi_step = 0;
+    8          int die = 0;
+    9          int shizi_angle = 0;
+   10          int shizi_cnt = 100;
+   11          int shizi_bu = 0;
+   12          
+   13          void pd_shizi() 
+   14          {
+   15   1        if(shizi == 0)
+   16   1        {
+   17   2          left = 760;
+   18   2        }
+   19   1        if(!shizi && (((ad[0] >70 && ad[1] > 70) || (ad[0] + ad[1] > 150)) && 
+   20   1          ((ad[2] > 60 && ad[3] > 60) || (ad[2] + ad[3]) > 120) && my_divide(ad[2],ad[3]) < 2) && shizi_cnt > 90 
+             -&& !flag[1])
+   21   1        {
+   22   2           buzzer(true);
+   23   2           shizi = 1;
+   24   2           open = 1;
+   25   2           sum_angle = 0;
+   26   2           left = 753;
+   27   2        }
+   28   1        if(shizi_cnt < 100) shizi_cnt = shizi_cnt+1;
+   29   1        if(shizi && shizi_bu < 20100) shizi_bu = shizi_bu + (nowspeed_L + nowspeed_R) / 2;
+   30   1        if((abs(sum_angle) > 260 || shizi_bu > 20000)&& shizi && iscir == 0)
+   31   1        {
+   32   2           buzzer(false);
+   33   2           shizi = 0;
+   34   2           open = 0;
+   35   2           sum_angle = 0;
+   36   2           left = 760;
+   37   2           shizi_cnt = 0;
+   38   2           shizi_bu = 0;
+   39   2        }
+   40   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       362     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =        16     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+C251 COMPILER V5.60.0,  shizi                                                              07/10/22  19:46:42  PAGE 2   
+
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        48     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

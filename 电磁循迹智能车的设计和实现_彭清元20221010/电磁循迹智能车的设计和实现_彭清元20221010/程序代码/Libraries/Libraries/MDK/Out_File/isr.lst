@@ -1,0 +1,352 @@
+C251 COMPILER V5.60.0,  isr                                                                07/10/22  19:46:40  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE isr
+OBJECT MODULE PLACED IN .\Out_File\isr.obj
+COMPILER INVOKED BY: D:\Keil_v5\C251\BIN\C251.EXE ..\USER\src\isr.c XSMALL INTR2 WARNINGLEVEL(3) BROWSE INCDIR(..\..\Lib
+                    -raries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src)
+                    - DEBUG PRINT(.\Out_File\isr.lst) TABS(2) OBJECT(.\Out_File\isr.obj) 
+
+stmt  level    source
+
+    1          ///******************************************************************************************************
+             -***************
+    2          // * COPYRIGHT NOTICE
+    3          // * Copyright (c) 2020,逐飞科技
+    4          // * All rights reserved.
+    5          // * 技术讨论QQ群：一群：179029047(已满)  二群：244861897(已满)  三群：824575535
+    6          // *
+    7          // * 以下所有内容版权均属逐飞科技所有，未经允许不得用于商业用途，
+    8          // * 欢迎各位使用并传播本程序，修改内容时必须保留逐飞科技的版权声明。
+    9          // *
+   10          // * @file          isr
+   11          // * @company       成都逐飞科技有限公司
+   12          // * @author        逐飞科技(QQ790875685)
+   13          // * @version       查看doc内version文件 版本说明
+   14          // * @Software      MDK FOR C251 V5.60
+   15          // * @Target core   STC16F40K128
+   16          // * @Taobao        https://seekfree.taobao.com/
+   17          // * @date          2020-4-14
+   18          // ******************************************************************************************************
+             -**************/
+   19          #include "headfile.h"
+   20          #include "math.h"
+   21          int stop_add = 0;
+   22          
+   23          //UART1中断
+   24          void UART1_Isr() interrupt 4
+   25          {
+   26   1          uint8 res;
+   27   1        static uint8 dwon_count;
+   28   1          if(UART1_GET_TX_FLAG)
+   29   1          {
+   30   2              UART1_CLEAR_TX_FLAG;
+   31   2              busy[1] = 0;
+   32   2          }
+   33   1          if(UART1_GET_RX_FLAG)
+   34   1          {
+   35   2              UART1_CLEAR_RX_FLAG;
+   36   2              res = SBUF;
+   37   2              //程序自动下载
+   38   2              if(res == 0x7F)
+   39   2              {
+   40   3                  if(dwon_count++ > 20)
+   41   3                      IAP_CONTR = 0x60;
+   42   3              }
+   43   2              else
+   44   2              {
+   45   3                  dwon_count = 0;
+   46   3              }
+   47   2          }
+   48   1      }
+   49          
+   50          //UART2中断
+   51          void UART2_Isr() interrupt 8
+   52          {
+   53   1          if(UART2_GET_TX_FLAG)
+   54   1        {
+   55   2              UART2_CLEAR_TX_FLAG;
+C251 COMPILER V5.60.0,  isr                                                                07/10/22  19:46:40  PAGE 2   
+
+   56   2          busy[2] = 0;
+   57   2        }
+   58   1          if(UART2_GET_RX_FLAG)
+   59   1        {
+   60   2              UART2_CLEAR_RX_FLAG;
+   61   2          //接收数据寄存器为：S2BUF
+   62   2      
+   63   2        }
+   64   1      }
+   65          
+   66          //UART3中断
+   67          void UART3_Isr() interrupt 17
+   68          {
+   69   1          if(UART3_GET_TX_FLAG)
+   70   1        {
+   71   2              UART3_CLEAR_TX_FLAG;
+   72   2          busy[3] = 0;
+   73   2        }
+   74   1          if(UART3_GET_RX_FLAG)
+   75   1        {
+   76   2              UART3_CLEAR_RX_FLAG;
+   77   2          //接收数据寄存器为：S3BUF
+   78   2      
+   79   2        }
+   80   1      }
+   81          
+   82          //UART4中断
+   83          void UART4_Isr() interrupt 18
+   84          {
+   85   1          if(UART4_GET_TX_FLAG)
+   86   1        {
+   87   2              UART4_CLEAR_TX_FLAG;
+   88   2          busy[4] = 0;
+   89   2        }
+   90   1          if(UART4_GET_RX_FLAG)
+   91   1        {
+   92   2              UART4_CLEAR_RX_FLAG;
+   93   2          //接收数据寄存器为：S4BUF;
+   94   2          
+   95   2          wireless_uart_callback();//无线转串口回调函数
+   96   2        }
+   97   1      }
+   98          
+   99          
+  100          void INT0_Isr() interrupt 0
+  101          {
+  102   1      
+  103   1      }
+  104          
+  105          void INT1_Isr() interrupt 2
+  106          {
+  107   1      
+  108   1      }
+  109          
+  110          void INT2_Isr() interrupt 10
+  111          {
+  112   1        INT2_CLEAR_FLAG;  //清除中断标志
+  113   1      }
+  114          
+  115          void INT3_Isr() interrupt 11
+  116          {
+  117   1        INT3_CLEAR_FLAG;  //清除中断标志
+  118   1      }
+  119          
+  120          void INT4_Isr() interrupt 16
+  121          {
+C251 COMPILER V5.60.0,  isr                                                                07/10/22  19:46:40  PAGE 3   
+
+  122   1        INT4_CLEAR_FLAG;  //清除中断标志
+  123   1      }
+  124          
+  125          void TM0_Isr() interrupt 1
+  126          {
+  127   1      
+  128   1      }
+  129          
+  130          void TM1_Isr() interrupt 3
+  131          {
+  132   1      
+  133   1      }
+  134          
+  135          void TM2_Isr() interrupt 12
+  136          {
+  137   1        TIM2_CLEAR_FLAG;  //清除中断标志
+  138   1      }
+  139          
+  140          void TM3_Isr() interrupt 19
+  141          {
+  142   1        TIM3_CLEAR_FLAG; //清除中断标志
+  143   1      }
+  144          
+  145          
+  146          void TM4_Isr() interrupt 20
+  147          {
+  148   1        TIM4_CLEAR_FLAG; //清除中断标志
+  149   1        
+  150   1        
+  151   1        
+  152   1        //自己的函数书写位置
+  153   1      //  
+  154   1      //    pd_shizi();
+  155   1      
+  156   1      //    if(left_podao == 1)
+  157   1      //    {
+  158   1      //        step_podao = step_podao + nowspeed_L;
+  159   1      //        if(step_podao >= 10000) step_podao = 10000;
+  160   1      //    }
+  161   1      
+  162   1      //    if(sc <= 1010)
+  163   1      //    {
+  164   1      //       sc += 1;
+  165   1      //    }
+  166   1      //      
+  167   1      //    action();
+  168   1      //    
+  169   1      //    finsh();
+  170   1      //    
+  171   1      //    if(isstart == 1)
+  172   1      //    {
+  173   1      //      nowtime = cur();
+  174   1      //    }
+  175   1      //    
+  176   1      //    if(isend == 1)
+  177   1      //    {
+  178   1      //      end_time = Endtime();
+  179   1      //    }
+  180   1      //  
+  181   1      //    if(switch_cnt == 1 || switch_cnt == 2)
+  182   1      //    {
+  183   1      //      maichong = maichong + (nowspeed_L + nowspeed_R) / 2;
+  184   1      //      
+  185   1      //      if(maichong > 1000) maichong = 1000;
+  186   1      //      
+  187   1      //    }
+C251 COMPILER V5.60.0,  isr                                                                07/10/22  19:46:40  PAGE 4   
+
+  188   1      
+  189   1      //    get_icm20602_gyro_simspi(); // 调用陀螺仪的 角速度
+  190   1      //    
+  191   1      //    Dial(); // 拨码开关
+  192   1      //    
+  193   1      //    w_angle = (icm_gyro_z + 7) / 16.384;
+  194   1      //    w_angle_y = (icm_gyro_y + 2) / 16.384;
+  195   1      //    angle_y();
+  196   1      //    if(fork_left) 
+  197   1      //    {
+  198   1      //      podao();
+  199   1      //    }
+  200   1      //    if(open == 1)
+  201   1      //    {
+  202   1      //      angle(); // 角度累加
+  203   1      //    }
+  204   1      //    
+  205   1      //    if(stop_add < 110)
+  206   1      //    {
+  207   1      //      stop_add = stop_add + 1;
+  208   1      //    }
+  209   1      //    
+  210   1      //    if(!cheku_flag) speed_analsy();
+  211   1      //    
+  212   1      //    if(stop_add > 100)
+  213   1      //    {
+  214   1      //      my_stop(); //停车保护
+  215   1      //    }
+  216   1      //    getspeed();  //获取速度
+  217   1      //  
+  218   1      //    cal_speed(); //计算速度
+  219   1      //    
+  220   1      //    ad_read(); // 电感读数
+  221   1      
+  222   1      //    pre_dir_circle();  //判断圆环的方向
+  223   1      
+  224   1      ////    1 表示 左边
+  225   1      ////    2 表示 右边
+  226   1      ////    cnt_fork = 2;
+  227   1      //    if(enter_Left == 1)  //进入左环
+  228   1      //    {
+  229   1      //      Left_circle();
+  230   1      //    }
+  231   1      //    
+  232   1      //    if(enter_Right == 1) //进入右环
+  233   1      //    {
+  234   1      //      Right_circle();
+  235   1      //    }
+  236   1      //    
+  237   1      //    
+  238   1      ////    out = 1;
+  239   1      //    // enter_flag 表示 进环标志
+  240   1      //    if(enter_flag == 0 && leave_flag == 0 && duty_fork == 0)
+  241   1      //    {
+  242   1      //      
+  243   1      //      duty_ = (int)PID_servo(); //位置PID
+  244   1      //      
+  245   1      //      // enter_Left 表示 进入左环标志
+  246   1      //      // 在圆环里面 循迹
+  247   1      //      if(enter_Left == 1 && normal_left == 1)
+  248   1      //      {
+  249   1      //      
+  250   1      //        duty_ = (int)PID_servo(); //位置PID
+  251   1      //        
+  252   1      //        if(duty_ < 740 )
+  253   1      //        {
+C251 COMPILER V5.60.0,  isr                                                                07/10/22  19:46:40  PAGE 5   
+
+  254   1      //          duty_ = 740;
+  255   1      //        }
+  256   1      //    
+  257   1      //      }
+  258   1      //    }
+  259   1      //    
+  260   1      //    //在 进入圆环的 时候 会执行 一下函数
+  261   1      //    
+  262   1      //    if(enter_flag == 1 && leave_flag == 0)
+  263   1      //    {
+  264   1      //        duty_ = 755;
+  265   1      //    }
+  266   1      //    
+  267   1      //    clear_count(); // 清除进圆环的次数
+  268   1      //  
+  269   1      //    if(iscir == 0 && ( sancha >= 20000 ))
+  270   1      //    {
+  271   1      //      forks();  //判断三岔
+  272   1      //    }
+  273   1      //    if( sancha <= 20100)
+  274   1      //    {
+  275   1      //      sancha = sancha + (nowspeed_L + nowspeed_R) / 2;
+  276   1      //    }
+  277   1      //    
+  278   1      //    cheku_plus();
+  279   1      //    Servoinit(); //舵机输出值 
+  280   1      }
+  281          
+  282          
+  283          //void  INT0_Isr()  interrupt 0;
+  284          //void  TM0_Isr()   interrupt 1;
+  285          //void  INT1_Isr()  interrupt 2;
+  286          //void  TM1_Isr()   interrupt 3;
+  287          //void  UART1_Isr() interrupt 4;
+  288          //void  ADC_Isr()   interrupt 5;
+  289          //void  LVD_Isr()   interrupt 6;
+  290          //void  PCA_Isr()   interrupt 7;
+  291          //void  UART2_Isr() interrupt 8;
+  292          //void  SPI_Isr()   interrupt 9;
+  293          //void  INT2_Isr()  interrupt 10;
+  294          //void  INT3_Isr()  interrupt 11;
+  295          //void  TM2_Isr()   interrupt 12;
+  296          //void  INT4_Isr()  interrupt 16;
+  297          //void  UART3_Isr() interrupt 17;
+  298          //void  UART4_Isr() interrupt 18;
+  299          //void  TM3_Isr()   interrupt 19;
+  300          //void  TM4_Isr()   interrupt 20;
+  301          //void  CMP_Isr()   interrupt 21;
+  302          //void  I2C_Isr()   interrupt 24;
+  303          //void  USB_Isr()   interrupt 25;
+  304          //void  PWM1_Isr()  interrupt 26;
+  305          //void  PWM2_Isr()  interrupt 27;
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       284     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =         3     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+C251 COMPILER V5.60.0,  isr                                                                07/10/22  19:46:40  PAGE 6   
+
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =         6     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

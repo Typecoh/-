@@ -1,0 +1,85 @@
+C251 COMPILER V5.60.0,  my_time                                                            07/10/22  19:46:42  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE my_time
+OBJECT MODULE PLACED IN .\Out_File\my_time.obj
+COMPILER INVOKED BY: D:\Keil_v5\C251\BIN\C251.EXE my_time.c XSMALL INTR2 WARNINGLEVEL(3) BROWSE INCDIR(..\..\Libraries\l
+                    -ibraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG P
+                    -RINT(.\Out_File\my_time.lst) TABS(2) OBJECT(.\Out_File\my_time.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          #include "my_time.h"
+    3          
+    4          double nowtime = 0;
+    5          double end_time =0;
+    6          double spent1 = 0;
+    7          double spent2 = 0;
+    8          int isstart = 0;
+    9          int isend = 2;
+   10          
+   11          void action();
+   12          void finsh();
+   13          double cur();
+   14          double Endtime();
+   15          
+   16          void action()
+   17          {
+   18   1          if(P26 == 0 && recording == 0)
+   19   1          {
+   20   2              isstart = 1;
+   21   2              isend = 1;
+   22   2          }
+   23   1          
+   24   1      }
+   25          
+   26          void finsh()
+   27          {
+   28   1          if(P26 == 0 && recording == 2)
+   29   1          {
+   30   2      //        isend = 0;
+   31   2          }
+   32   1          
+   33   1      }
+   34          
+   35          double cur()
+   36          {
+   37   1      
+   38   1        spent2 = spent2 + 1;
+   39   1        
+   40   1        return spent2 * 5 / 1000 ;
+   41   1        
+   42   1      }
+   43          
+   44          double Endtime()
+   45          {
+   46   1        spent1 = spent1 + 1;
+   47   1        return spent1 * 5 / 1000;
+   48   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       106     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+C251 COMPILER V5.60.0,  my_time                                                            07/10/22  19:46:42  PAGE 2   
+
+  xdata-const size     =    ------     ------
+  edata size           =        20     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        44     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

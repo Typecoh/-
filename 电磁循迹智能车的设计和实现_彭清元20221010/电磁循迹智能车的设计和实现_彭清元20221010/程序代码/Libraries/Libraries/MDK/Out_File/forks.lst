@@ -1,0 +1,58 @@
+C251 COMPILER V5.60.0,  forks                                                              14/03/22  19:59:07  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE forks
+OBJECT MODULE PLACED IN .\Out_File\forks.obj
+COMPILER INVOKED BY: C:\Keil_v5\C251\BIN\C251.EXE forks.c XSMALL INTR2 WARNINGLEVEL(3) BROWSE INCDIR(..\..\Libraries\lib
+                    -raries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRI
+                    -NT(.\Out_File\forks.lst) TABS(2) OBJECT(.\Out_File\forks.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          #include "forks.h"
+*** ERROR C318 IN LINE 2 OF forks.c: can't open file 'forks.h'
+    3          
+    4          //int s_flag1 = 0;
+    5          //int s_flag2 = 0;
+    6          //int s_flag3 = 0;
+    7          //int s_flag4 = 0;
+    8          //int s_flag5 = 0;
+    9          
+   10          //void forks();
+   11          
+   12          
+   13          //void forks()
+   14          //{
+   15          
+   16          //    if( ad[0] < 75 && ad[1] < 75 && ad[4] < 40 && ad[5] < 50 && s_flag1 == 0 && ad[2] < 30 && ad[3] < 3
+             -0)
+   17          //    {
+   18          //        s_flag1 = 1;
+   19          //    }
+   20          
+   21          //    if(s_flag1 == 1){
+   22          
+   23          //       if( my_divide(ad[0] , ad[1]) < 1.8 && my_divide(ad[4],ad[5]) < 1.8 && my_divide(ad[2], ad[3] < 2
+             -)){
+   24          
+   25          //        s_flag2 = 1;
+   26          //       
+   27          //       buzzer(1);
+   28          //        
+   29          //        
+   30          
+   31          //       }
+   32          
+   33          //       else {
+   34          
+   35          //        s_flag1 = 0;
+   36          
+   37          //       }
+   38          //    }
+   39          
+   40          //}
+   41          
+   42          
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  1 ERROR(S)

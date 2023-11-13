@@ -1,0 +1,93 @@
+C251 COMPILER V5.60.0,  Icm                                                                07/10/22  19:46:41  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE Icm
+OBJECT MODULE PLACED IN .\Out_File\Icm.obj
+COMPILER INVOKED BY: D:\Keil_v5\C251\BIN\C251.EXE Icm.c XSMALL INTR2 WARNINGLEVEL(3) BROWSE INCDIR(..\..\Libraries\libra
+                    -ries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT
+                    -(.\Out_File\Icm.lst) TABS(2) OBJECT(.\Out_File\Icm.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          #include "Icm.h"
+    3          
+    4          double sum_angle = 0; //????
+    5          float w_angle = 0;  //?õ¶?
+    6          float w_angle_y = 0;
+    7          double sum_angle_y = 0;
+    8          int flag_po = 0;
+    9          int ang_y_flag = 0;
+   10          int speed_yuan;
+   11          
+   12          void angle();
+   13          void podao();
+   14            
+   15          void angle()
+   16          {
+   17   1        if(fork_right == 1)
+   18   1        {
+   19   2          if(w_angle < 0)
+   20   2          {
+   21   3            sum_angle += w_angle * 0.005;
+   22   3          }
+   23   2        }
+   24   1        
+   25   1        else sum_angle += w_angle * 0.005;
+   26   1      }
+   27          
+   28          void angle_y()
+   29          {
+   30   1        sum_angle_y += w_angle_y * 0.005;
+   31   1        
+   32   1      }
+   33          
+   34          void podao()
+   35          {
+   36   1          angle_y();
+   37   1      
+   38   1          if(sum_angle_y < -6 && flag_po == 0)
+   39   1          {
+   40   2              flag_po = 1;
+   41   2          }
+   42   1          
+   43   1          
+   44   1          if(flag_po) 
+   45   1          {
+   46   2            ki_l = 10;
+   47   2            ki_r = 10;
+   48   2            if(in_left_speed >40)
+   49   2            {
+   50   3              speed_yuan = in_left_speed;
+   51   3              in_left_speed = 40;
+   52   3            } 
+   53   2      
+   54   2          } 
+   55   1        
+   56   1      }
+
+C251 COMPILER V5.60.0,  Icm                                                                07/10/22  19:46:41  PAGE 2   
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       168     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =        22     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        44     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

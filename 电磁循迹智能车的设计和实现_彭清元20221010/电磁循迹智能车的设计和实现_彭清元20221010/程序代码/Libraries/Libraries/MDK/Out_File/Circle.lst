@@ -1,0 +1,459 @@
+C251 COMPILER V5.60.0,  Circle                                                             07/10/22  19:46:41  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE Circle
+OBJECT MODULE PLACED IN .\Out_File\Circle.obj
+COMPILER INVOKED BY: D:\Keil_v5\C251\BIN\C251.EXE Circle.c XSMALL INTR2 WARNINGLEVEL(3) BROWSE INCDIR(..\..\Libraries\li
+                    -braries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PR
+                    -INT(.\Out_File\Circle.lst) TABS(2) OBJECT(.\Out_File\Circle.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          #include "Circle.h"
+    3          #include "my_Math.h"
+    4          
+    5          int iscir = 0;
+    6          
+    7          int circle_count = 0; //进入圆环的次数
+    8          int enter_flag = 0; // 进入圆环的标志点
+    9          int leave_flag = 0; // 离开圆环的标志点
+   10          
+   11          int normal_left = 0; // 在 左环内 正常走
+   12          
+   13          long run_step = 0; //运行的步数
+   14          
+   15          int soon_leave = 0; // 即将离开圆环的标志点
+   16          
+   17          int flag[10] = {0}; // 标志点计数
+   18          int open = 0;       // 打开角度累加
+   19          
+   20          int enter_Left = 0;  // 判断为左圆环
+   21          int enter_Right = 0; // 判断为右圆环
+   22           
+   23          int enter_step_left = 0; //进入左圆环的步数
+   24          int enter_step_right = 0; //进入右圆环的步数
+   25          
+   26          int leave_step_left = 0;  // 离开左圆环需要走的步骤
+   27          int leave_step_right = 0; // 离开右圆环需要走的步骤
+   28          
+   29          int vary_pulse = 0;
+   30          int vary_num = 0;
+   31          
+   32          int cir_sancha = 0;
+   33          
+   34          int next = 0 ;
+   35          
+   36          
+   37          int duty_min[11] = 
+   38          {
+   39                724,724,724,727,727,727,727,727,727,727,727
+   40          //    710,710,710,710,710,710,710,710,710,710,710
+   41          };
+   42          
+   43          void Left_circle();  //进入左圆环
+   44          void Right_circle(); //进入右圆环
+   45          void pre_dir_circle(); // 判断圆环的方向
+   46          void clear_count();
+   47          void pulse();
+   48          
+   49          void pre_dir_circle(){
+   50   1      
+   51   1        if( ad[0] + ad[1] > 270 && ad[6] > 120 &&  ( ad[0] + ad[4] ) > 220 
+   52   1            && enter_Left == 0 && enter_Right == 0 && circle_count == 0)
+   53   1        {
+   54   2          // 为了防止 重复进环 设置一个标志点
+   55   2      
+   56   2      //    buzzer(true); // 蜂鸣器
+   57   2          
+C251 COMPILER V5.60.0,  Circle                                                             07/10/22  19:46:41  PAGE 2   
+
+   58   2      //    if((ad[0] + ad[1] + ad[4] + ad[5] > 550))
+   59   2      //    {
+   60   2      //      next = 1;
+   61   2      //    }
+   62   2          
+   63   2           enter_Left = 1;
+   64   2          
+   65   2           circle_count = 1;
+   66   2        }
+   67   1      
+   68   1      }
+   69          
+   70          void Left_circle(){
+   71   1      
+   72   1      //  if((ad[0] + ad[1] + ad[4] + ad[5] > 550) && next == 0 && flag[1] == 0)
+   73   1      //  {
+   74   1      //    next = 1;
+   75   1      //  }
+   76   1        
+   77   1      //  if( ad[6] > 175
+   78   1      //      && flag[2] == 0  && (ad[1] + ad[0]) > 320  ) {
+   79   1      //if( ((ad[6] > 175 && ad[9] > 170) || 
+   80   1      //    (ad[0] > 135 && ad[1] > 185 && ad[6] > 145 && ad[9] > 155)) 
+   81   1      //  && flag[2] == 0  && (ad[1] + ad[0]) > 320  ) {
+   82   1          if(((ad[6] > 175 && ad[9] > 170) || 
+   83   1          (ad[0] < 175 && ad[1] > 185 && ad[4] < 175 && ad[5] > 185 && ad[6] > 150 && ad[9] > 150) ||
+   84   1          (ad[0] > 185 && ad[1] < 130 && ad[4] > 180 && ad[5] < 170 && ad[6] > 150 && ad[9] > 150)) 
+   85   1          && flag[2] == 0  ){
+   86   2        
+   87   2          // 调用蜂鸣器
+   88   2          
+   89   2          
+   90   2          iscir = 1;
+   91   2          
+   92   2          open = 1;
+   93   2      
+   94   2          flag[1] = 1;
+   95   2          if(ad[0] > 185 && ad[1] < 130 && ad[4] > 180 && ad[5] < 170 && ad[6] > 150 && ad[9] > 150)  flag[1] = 3
+             -;
+   96   2          if(ad[0] < 175 && ad[1] > 185 && ad[4] < 175 && ad[5] > 185 && ad[6] > 150 && ad[9] > 150) flag[1] = 2;
+   97   2      //    if(flag[1] == 3)buzzer(true);
+   98   2      
+   99   2          
+  100   2          sum_angle = 0;
+  101   2      
+  102   2        }
+  103   1      
+  104   1        if( flag[1] && flag[3] == 0 ){
+  105   2      
+  106   2          if(((ad[6] < 170 || ad[9] < 170) && flag[1] == 1) || 
+  107   2            ((ad[6] < 143 || ad[9] < 153) && flag[1] == 2) ||
+  108   2            ((ad[9] < 151) && flag[1] == 3)){
+  109   3          
+  110   3      //    buzzer(true);
+  111   3      
+  112   3            enter_flag = 1;
+  113   3            
+  114   3            flag[2] = 1;
+  115   3              // 开始进入 圆环
+  116   3            enter_step_left = enter_step_left + nowspeed_L;
+  117   3            
+  118   3            if(enter_step_left > 4000){
+  119   4      
+  120   4              flag[3] = 1;
+  121   4              enter_step_left = 0;
+  122   4      
+C251 COMPILER V5.60.0,  Circle                                                             07/10/22  19:46:41  PAGE 3   
+
+  123   4            }
+  124   3          }
+  125   2        }
+  126   1        if( flag[3] == 1 && flag[5] == 0 ){
+  127   2          
+  128   2          enter_step_left = enter_step_left + nowspeed_L;
+  129   2          
+  130   2          enter_flag = 0;
+  131   2          
+  132   2          // 在环内正常走
+  133   2          
+  134   2          normal_left = 1;
+  135   2          
+  136   2          next = 0; // 清除 靠边走
+  137   2      
+  138   2          if(( sum_angle >= 235 || enter_step_left > 8000) && flag[4] == 0){
+  139   3            
+  140   3            enter_step_left = 0;
+  141   3       
+  142   3           // 即将出环
+  143   3          buzzer(true);
+  144   3           soon_leave = 1;
+  145   3            
+  146   3           leave_flag = 1;
+  147   3            
+  148   3           flag[4] = 1;
+  149   3            
+  150   3           flag[5] = 1;
+  151   3           
+  152   3          }
+  153   2          
+  154   2        }
+  155   1      
+  156   1        if(flag[5] == 1 && flag[6] == 0){
+  157   2      
+  158   2          // 出圆环
+  159   2          
+  160   2      //    buzzer(true);
+  161   2      
+  162   2          leave_step_left = leave_step_left + nowspeed_L;
+  163   2      
+  164   2          if((leave_step_left > 8000 || sum_angle >= 330)){
+  165   3      
+  166   3            flag[6] = 1;
+  167   3            
+  168   3            buzzer(false);
+  169   3      
+  170   3          } 
+  171   2      
+  172   2        }
+  173   1      
+  174   1        if(flag[6] == 1)
+  175   1        {
+  176   2          // 出环成功
+  177   2          // 所有标志位全部清空
+  178   2      
+  179   2          buzzer(false);
+  180   2          
+  181   2          sum_angle = 0;
+  182   2          
+  183   2          cir_sancha = 1;
+  184   2          
+  185   2          leave_pid = 0;
+  186   2          
+  187   2          enter_Left = 0;
+  188   2          
+C251 COMPILER V5.60.0,  Circle                                                             07/10/22  19:46:41  PAGE 4   
+
+  189   2          iscir = 0;
+  190   2      
+  191   2          flag[1] = flag[2] = flag[3] = flag[4] = flag[5] = flag[6] = 0;
+  192   2          
+  193   2          enter_flag = 0;
+  194   2          
+  195   2          leave_flag = 0;
+  196   2          
+  197   2          normal_left = 0;
+  198   2          
+  199   2          leave_step_left = 0;
+  200   2          
+  201   2          open = 0;
+  202   2          
+  203   2          vary_pulse = 0; // 脉冲 
+  204   2          
+  205   2          vary_num = 0; // duty_ 限幅
+  206   2          
+  207   2          soon_leave = 0;
+  208   2          
+  209   2          enter_step_left = 0;
+  210   2          
+  211   2          enter_step_left = 0;
+  212   2          
+  213   2          pansancha = 1;
+  214   2          
+  215   2        }
+  216   1      
+  217   1      }
+  218          
+  219          void Right_circle(){
+  220   1        
+  221   1      //  if( ad[2] > 150 )
+  222   1      //  {
+  223   1      ////  即将到入圆环位置
+  224   1      ////    enter_flag = 1;
+  225   1      //      enter_Right = 1;
+  226   1      //  }
+  227   1      
+  228   1        if( ad[2] > 210 && flag[2] == 0  && (ad[1] + ad[0]) > 250 ) {
+  229   2      
+  230   2          //调用蜂鸣器
+  231   2          
+  232   2          buzzer(1);
+  233   2          
+  234   2          open = 1;
+  235   2      
+  236   2          flag[1] = 1;
+  237   2          
+  238   2          sum_angle = 0;
+  239   2      
+  240   2        }
+  241   1      
+  242   1        if( flag[1] == 1 && flag[3] == 0 ){
+  243   2      
+  244   2          if(ad[2] < 205){
+  245   3            
+  246   3            buzzer(0);
+  247   3            
+  248   3            enter_flag = 1;
+  249   3            
+  250   3            flag[2] = 1;
+  251   3            // 开始进入 圆环
+  252   3            
+  253   3            vary_pulse = 0;  // 每次进环 先置零
+  254   3            
+C251 COMPILER V5.60.0,  Circle                                                             07/10/22  19:46:41  PAGE 5   
+
+  255   3            enter_step_right = enter_step_right + nowspeed_L;
+  256   3            
+  257   3            if(enter_step_right > 5000){
+  258   4      
+  259   4              flag[3] = 1;
+  260   4      
+  261   4            }
+  262   3          }
+  263   2        }
+  264   1        
+  265   1        if(flag[3] == 1 && flag[5] == 0){
+  266   2          
+  267   2          enter_flag = 0;
+  268   2          
+  269   2          // 在环内正常走
+  270   2      
+  271   2          if(sum_angle <= -260 && flag[4] == 0){
+  272   3      
+  273   3            // 即将出环
+  274   3            
+  275   3           soon_leave = 1;
+  276   3            
+  277   3           leave_flag = 1;
+  278   3            
+  279   3           flag[4] = 1;
+  280   3            
+  281   3           flag[5] = 1;
+  282   3            
+  283   3           buzzer(1);
+  284   3      
+  285   3          }
+  286   2          
+  287   2        }
+  288   1      
+  289   1        if(flag[5] == 1 && flag[6] == 0){
+  290   2      
+  291   2          // 出圆环
+  292   2      
+  293   2          leave_step_right = leave_step_right + nowspeed_L;
+  294   2      
+  295   2          if(leave_step_right > 3000 || ( ad[0] + ad[1] + ad[2] ) > 300 || sum_angle < -355){
+  296   3      
+  297   3            flag[6] = 1;
+  298   3            
+  299   3            buzzer(0);
+  300   3      
+  301   3          } 
+  302   2      
+  303   2        }
+  304   1      
+  305   1        if(flag[6] == 1)
+  306   1        {
+  307   2          // 出环成功
+  308   2          // 所有标志位全部清空
+  309   2          
+  310   2          buzzer(0);
+  311   2          
+  312   2          enter_Right = 0;
+  313   2      
+  314   2          flag[1] = flag[2] = flag[3] = flag[4] = flag[5] = flag[6] = 0;
+  315   2          
+  316   2          enter_flag = 0;
+  317   2          
+  318   2          leave_flag = 0;
+  319   2          
+  320   2          vary_pulse = 0; // 脉冲 
+C251 COMPILER V5.60.0,  Circle                                                             07/10/22  19:46:41  PAGE 6   
+
+  321   2          
+  322   2          vary_num = 0; // duty_ 限幅
+  323   2          
+  324   2          open = 0;
+  325   2          
+  326   2          soon_leave = 0;
+  327   2          
+  328   2          enter_step_right = 0;
+  329   2          
+  330   2          leave_step_right = 0;
+  331   2          
+  332   2          cir_sancha = 1;
+  333   2          
+  334   2        }
+  335   1      
+  336   1      }
+  337          
+  338          void clear_count()
+  339          {
+  340   1        if(circle_count == 1)
+  341   1        {
+  342   2           run_step = run_step + nowspeed_L;
+  343   2          
+  344   2          if(run_step >= 50000)
+  345   2          {
+  346   3            circle_count = 0;
+  347   3            run_step = 0;
+  348   3          }
+  349   2        }
+  350   1      }
+  351          
+  352          void pulse()
+  353          {
+  354   1      
+  355   1        if(normal_left == 1)
+  356   1      
+  357   1        vary_pulse = vary_pulse + nowspeed_L;
+  358   1        
+  359   1        if(vary_pulse < 2000)
+  360   1        {
+  361   2          vary_num = 0;
+  362   2        }
+  363   1        
+  364   1        else if(vary_pulse < 3000)
+  365   1        {
+  366   2          vary_num = 1;
+  367   2        }
+  368   1        
+  369   1        else if(vary_pulse < 4000)
+  370   1        {
+  371   2          vary_num = 2;
+  372   2        }
+  373   1        
+  374   1        else if(vary_pulse < 5000)
+  375   1        {
+  376   2          vary_num = 3;
+  377   2        }
+  378   1        
+  379   1        else if(vary_pulse < 6000)
+  380   1        {
+  381   2          vary_num = 4;
+  382   2        }
+  383   1        
+  384   1        else if(vary_pulse < 7000)
+  385   1        {
+  386   2          vary_num = 6;
+C251 COMPILER V5.60.0,  Circle                                                             07/10/22  19:46:41  PAGE 7   
+
+  387   2        }
+  388   1      
+  389   1        else if(vary_pulse < 10000)
+  390   1        {
+  391   2          vary_num = 7;
+  392   2        }
+  393   1        
+  394   1        else if(vary_pulse < 11000)
+  395   1        {
+  396   2          vary_num = 8;
+  397   2        }
+  398   1        
+  399   1        else if(vary_pulse < 12000)
+  400   1        {
+  401   2          vary_num = 9;
+  402   2        }
+  403   1        
+  404   1        else if(vary_pulse < 12500)
+  405   1        {
+  406   2          vary_num = 10;
+  407   2        }
+  408   1        
+  409   1      }
+  410          
+  411          
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =      1632     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =        80     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =       160     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,168 @@
+C251 COMPILER V5.60.0,  one                                                                07/10/22  19:46:41  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE one
+OBJECT MODULE PLACED IN .\Out_File\one.obj
+COMPILER INVOKED BY: D:\Keil_v5\C251\BIN\C251.EXE one.c XSMALL INTR2 WARNINGLEVEL(3) BROWSE INCDIR(..\..\Libraries\libra
+                    -ries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT
+                    -(.\Out_File\one.lst) TABS(2) OBJECT(.\Out_File\one.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          #include "one.h"
+    3          
+    4          double ad[10];
+    5          double temp_ad[10];
+    6          
+    7          double save_0[10];
+    8          double save_1[10];
+    9          double save_2[10];
+   10          double save_3[10];
+   11          double save_4[10];
+   12          double save_5[10];
+   13          double save_6[10];
+   14          double save_7[10];
+   15          double save_8[10];
+   16          double save_9[10];
+   17          
+   18          double temp_save_0[10];
+   19          double temp_save_1[10];
+   20          double temp_save_2[10];
+   21          double temp_save_3[10];
+   22          double temp_save_4[10];
+   23          double temp_save_5[10];
+   24          double a = 0.7;
+   25          double b = 0.3;
+   26          int k = 0;
+   27          
+   28          double min1 = 100;
+   29          double min2 = 100;
+   30          double min3 = 100; // 270
+   31          double min4 = 100;
+   32          double min5 = 105;
+   33          double max1 = 4095;
+   34          double max2 = 4095;
+   35          double max3 = 4095;
+   36          double max4 = 4095;
+   37          double max5 = 4095;
+   38              
+   39              
+   40          void ad_read()
+   41          {
+   42   1           int i = 0;
+   43   1        
+   44   1           for(i = 0; i < 10; i++ )
+   45   1          {
+   46   2      
+   47   2           save_0[i] = adc_mean_filter(ADC_P15,ADC_12BIT,10);  //下左
+   48   2      
+   49   2           save_1[i] = adc_mean_filter(ADC_P11,ADC_12BIT,10);  //下右
+   50   2      
+   51   2      //     save_0[i] = adc_mean_filter(ADC_P11,ADC_12BIT,10);  //下左
+   52   2      
+   53   2      //     save_1[i] = adc_mean_filter(ADC_P15,ADC_12BIT,10);  //下右
+   54   2      
+   55   2           save_2[i] = adc_mean_filter(ADC_P16,ADC_12BIT,10);  //下左竖直
+   56   2      
+   57   2           save_3[i] = adc_mean_filter(ADC_P13,ADC_12BIT,10); //下右竖直
+C251 COMPILER V5.60.0,  one                                                                07/10/22  19:46:41  PAGE 2   
+
+   58   2            
+   59   2           save_4[i] = adc_mean_filter(ADC_P00,ADC_12BIT,10); //上左
+   60   2             
+   61   2           save_5[i] = adc_mean_filter(ADC_P10,ADC_12BIT,10); // 上右
+   62   2      
+   63   2      //     save_4[i] = adc_mean_filter(ADC_P10,ADC_12BIT,10); //上左
+   64   2      //       
+   65   2      //     save_5[i] = adc_mean_filter(ADC_P00,ADC_12BIT,10); // 上右
+   66   2            
+   67   2           save_6[i] = adc_mean_filter(ADC_P14,ADC_12BIT,10); // 下中
+   68   2           
+   69   2           save_7[i] = adc_mean_filter(ADC_P01,ADC_12BIT,10);  //上左竖直
+   70   2      
+   71   2           save_8[i] = adc_mean_filter(ADC_P06,ADC_12BIT,10);  //上右竖直
+   72   2      
+   73   2           save_9[i] = adc_mean_filter(ADC_P05,ADC_12BIT,10);  //上中间
+   74   2                  
+   75   2          }
+   76   1      
+   77   1            ad[0] = LB(save_0);
+   78   1            ad[1] = LB(save_1);
+   79   1            ad[2] = LB(save_2);
+   80   1            ad[3] = LB(save_3);
+   81   1            ad[4] = LB(save_4);
+   82   1            ad[5] = LB(save_5);
+   83   1            ad[6] = LB(save_6);
+   84   1            ad[7] = LB(save_7);
+   85   1            ad[8] = LB(save_8);
+   86   1            ad[9] = LB(save_9);
+   87   1            
+   88   1            ad[0] = (double) (ad[0] - min1) / (double) (max1 - min1) * 200;  // 左水平
+   89   1            ad[1] = (double) (ad[1] - min2) / (double) (max2 - min2) * 200;  // 有水平
+   90   1            ad[2] = (double) (ad[2] - min2) / (double) (max2 - min2) * 200;  // 左竖直
+   91   1            ad[3] = (double) (ad[3] - min2) / (double) (max2 - min2) * 200;  // 右竖直
+   92   1            ad[4] = (double) (ad[4] - min2) / (double) (max2 - min2) * 200;  // 左前水平
+   93   1            ad[5] = (double) (ad[5] - min2) / (double) (max2 - min2) * 200;  // 右前水平
+   94   1            ad[6] = (double) (ad[6] - min2) / (double) (max2 - min2) * 200;  // 右前水平
+   95   1            ad[7] = (double) (ad[7] - min2) / (double) (max2 - min2) * 200;  // 左前水平
+   96   1            ad[8] = (double) (ad[8] - min2) / (double) (max2 - min2) * 200;  // 右前水平
+   97   1            ad[9] = (double) (ad[9] - min2) / (double) (max2 - min2) * 200;  // 右前水平
+   98   1            
+   99   1      
+  100   1            for( k = 0 ; k<= 9; k++)
+  101   1            {
+  102   2                if(ad[k] <= 0) ad[k] = 1;
+  103   2            }
+  104   1      
+  105   1      
+  106   1      }
+  107          
+  108          double LB(float *ad)//???????
+  109          {
+  110   1          int i;
+  111   1          double max1,min1;  //???弫??????
+  112   1          double sum = 0;
+  113   1      
+  114   1          max1 = ad[0];
+  115   1          min1 = ad[0];
+  116   1      
+  117   1          for(i=0;i<sizeof(ad);i++)
+  118   1          {
+  119   2              if(max1 < ad[i] ) max1 = ad[i];
+  120   2      
+  121   2              if(min1 > ad[i] ) min1 = ad[i];
+  122   2      
+  123   2              sum += ad[i];
+C251 COMPILER V5.60.0,  one                                                                07/10/22  19:46:41  PAGE 3   
+
+  124   2          }
+  125   1      
+  126   1          sum =(sum-max1-min1)/(sizeof(ad)-2);    //>>3
+  127   1          
+  128   1          return sum;
+  129   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       894     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =       770     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =       102     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

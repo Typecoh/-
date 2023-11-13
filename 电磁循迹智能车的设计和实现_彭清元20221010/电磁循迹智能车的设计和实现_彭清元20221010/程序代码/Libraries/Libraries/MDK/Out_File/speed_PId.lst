@@ -1,0 +1,233 @@
+C251 COMPILER V5.60.0,  speed_PId                                                          02/03/22  14:42:04  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE speed_PId
+OBJECT MODULE PLACED IN .\Out_File\speed_PId.obj
+COMPILER INVOKED BY: C:\Keil_v5\C251\BIN\C251.EXE speed_PId.c XSMALL INTR2 WARNINGLEVEL(3) BROWSE INCDIR(..\..\Libraries
+                    -\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG
+                    - PRINT(.\Out_File\speed_PId.lst) TABS(2) OBJECT(.\Out_File\speed_PId.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+*** ERROR C318 IN LINE 45 OF ..\..\Libraries\seekfree_peripheral\headfile.h: can't open file 'speed.h'
+    2          #include "speed.h"
+*** ERROR C318 IN LINE 2 OF speed_PId.c: can't open file 'speed.h'
+    3          
+    4          int speed1;
+    5          int speed2;
+    6          int all_speed;
+    7          int now_speed;
+    8          int nowspeed_L;
+    9          int nowspeed_R;
+   10          int old_speed;
+   11          int duty_L;
+   12          int duty_R;
+   13          int motor_out;
+   14          int motor_out1;
+   15          int motor_out2;
+   16          int run = 1;
+   17          
+   18          int temp_duty_L;
+   19          int temp_duty_R;
+   20          
+   21          // 给左轮使用 的pid
+   22          struct PID1_ {
+   23          
+   24                  int error;
+   25                  int last_error;   
+   26                  int pre_error;   
+   27                  int last_speed;
+   28          
+   29          }pid1;
+   30          
+   31          // 给右轮使用的pid
+   32          struct PID2_{
+   33          
+   34                  int error;
+   35                  int last_error;   
+   36                  int pre_error;    
+   37                  int last_speed;
+   38          
+   39          }pid2;
+   40          
+   41          
+   42          float kp_l = 50, ki_l = 0.5,  kd_l = 0;
+   43          float kp_r = 50, ki_r = 0.5,  kd_r = 0;
+   44          // 获取当前速度
+   45          void getspeed();
+   46          // 给左轮调pid
+   47          int PID_Increase1(int ActualSpeed,int SetSpeed);
+   48          // 给右轮调pid
+   49          int PID_Increase2(int ActualSpeed,int SetSpeed);
+   50          // 左轮 电机输出
+   51          void Motor_rotation_L(int L);
+   52          // 右轮电机输出
+   53          void Motor_rotation_R(int R);
+   54          
+   55          void getspeed()
+C251 COMPILER V5.60.0,  speed_PId                                                          02/03/22  14:42:04  PAGE 2   
+
+   56          {
+   57   1        // 获取编码器的值
+   58   1          nowspeed_L = ctimer_count_read(CTIM0_P34);  
+   59   1          nowspeed_R = ctimer_count_read(CTIM3_P04);   
+   60   1        // 将编码器的值清空
+   61   1          ctimer_count_clean(CTIM0_P34);
+   62   1          ctimer_count_clean(CTIM3_P04);
+   63   1      }
+   64          
+   65          
+   66          int PID_Increase1(int ActualSpeed,int SetSpeed)
+   67          {
+   68   1          int32 ierror;
+   69   1      
+   70   1          ierror = SetSpeed - ActualSpeed;
+   71   1      
+   72   1              pidinc1 =  kp_* ( ierror - pid1.last_error )
+*** ERROR C67 IN LINE 72 OF speed_PId.c: 'pidinc1': undefined identifier
+*** ERROR C67 IN LINE 72 OF speed_PId.c: 'kp_': undefined identifier
+   73   1                      + ki_* ierror
+*** ERROR C67 IN LINE 73 OF speed_PId.c: 'ki_': undefined identifier
+   74   1                      + kd_*(ierror - 2 * pid1.last_error + pid1.pre_error);
+*** ERROR C67 IN LINE 74 OF speed_PId.c: 'kd_': undefined identifier
+   75   1      
+   76   1              pid1.pre_error=pid1.last_error;
+   77   1      
+   78   1              pid1.last_error=ierror;
+   79   1      
+   80   1              pid1.last_speed=ActualSpeed;
+   81   1      
+   82   1              if(pidinc1>=5600){
+*** ERROR C67 IN LINE 82 OF speed_PId.c: 'pidinc1': undefined identifier
+   83   2      
+   84   2                  pidinc1=5600;
+*** ERROR C67 IN LINE 84 OF speed_PId.c: 'pidinc1': undefined identifier
+   85   2      
+   86   2              }
+   87   1              if(pidinc1<=-5600){
+*** ERROR C67 IN LINE 87 OF speed_PId.c: 'pidinc1': undefined identifier
+   88   2      
+   89   2                  pidinc1=-5600;
+*** ERROR C67 IN LINE 89 OF speed_PId.c: 'pidinc1': undefined identifier
+   90   2      
+   91   2              }
+   92   1      
+   93   1              return pidinc1;
+*** ERROR C67 IN LINE 93 OF speed_PId.c: 'pidinc1': undefined identifier
+   94   1      }
+   95          
+   96          
+   97          void cal_speed()
+   98          {
+   99   1      
+  100   1         now_speed = (nowspeed_L + nowspeed_R) * 0.5;  
+  101   1         now_speed = now_speed * 0.9 + old_speed * 0.1;
+  102   1      
+  103   1         old_speed = now_speed;
+  104   1      
+  105   1          motor_out1 += PID_Increase1(now_speed,all_speed);  //????????????????pid????
+  106   1          motor_out2 += PID_Increase2(now_speed,all_speed);
+  107   1      
+  108   1          duty_L = motor_out1 
+  109   1          duty_R = motor_out2 
+*** ERROR C25 IN LINE 109 OF speed_PId.c: syntax error near 'duty_R'
+  110   1      
+  111   1          if(run == 1)
+C251 COMPILER V5.60.0,  speed_PId                                                          02/03/22  14:42:04  PAGE 3   
+
+*** ERROR C25 IN LINE 111 OF speed_PId.c: syntax error near 'if'
+  112   1          {
+  113   1              Motor_rotation_L(duty_L);
+  114   1      
+  115   1              Motor_rotation_R(duty_R);
+  116   1          }
+  117   1      
+  118   1          else
+  119   1          {
+  120   1              Motor_rotation_L(0);
+  121   1      
+  122   1              Motor_rotation_R(0);
+  123   1          }
+  124   1      
+  125   1      }
+  126   1      
+  127   1      
+  128   1      
+  129   1      void Motor_rotation_L(int duty_l)
+  130   1      {
+  131   1          if(duty_l < 0)//???
+  132   1          {
+  133   1              if( duty_l < -5000)
+  134   1              {
+  135   1                  duty_l = -5000;
+  136   1              }
+  137   1      
+  138   1              pwm_duty(PWMA_CH1P_P60, 0);
+  139   1      
+  140   1              pwm_duty(PWMA_CH2P_P62, -duty_l);
+  141   1      
+  142   1              temp_duty_L = -duty_l;
+  143   1          }
+  144   1          else if(duty_l > 0 )//???
+  145   1          {
+  146   1      
+  147   1              if(duty_l > 5000)
+  148   1              {
+  149   1                  duty_l = 5000;
+  150   1              }
+  151   1      
+  152   1              pwm_duty(PWMA_CH1P_P60, duty_l);
+  153   1      
+  154   1              pwm_duty(PWMA_CH2P_P62, 0);
+  155   1      
+  156   1          }
+  157   1          else
+  158   1          {
+  159   1              pwm_duty(PWMA_CH1P_P60, 0);
+  160   1      
+  161   1              pwm_duty(PWMA_CH2P_P62, 0);
+  162   1          }
+  163   1      }
+  164   1      
+  165   1      void Motor_rotation_R(int duty_r)
+  166   1      {
+  167   1          if(duty_r < 0)//???
+  168   1          {
+  169   1      
+  170   1              if( duty_r < -5000)
+  171   1              {
+  172   1                  duty_r = -5000;
+  173   1              }
+  174   1      
+  175   1              pwm_duty(PWMA_CH3P_P64, 0);
+  176   1      
+C251 COMPILER V5.60.0,  speed_PId                                                          02/03/22  14:42:04  PAGE 4   
+
+  177   1              pwm_duty(PWMA_CH4P_P66, -duty_r);
+  178   1      
+  179   1              temp_duty_R = -duty_r;
+  180   1          }
+  181   1          else if(duty_r > 0)//???
+  182   1          {
+  183   1      
+  184   1             if(duty_r > 5000)
+  185   1             {
+  186   1                 duty_r = 5000;
+  187   1             }
+  188   1      
+  189   1              pwm_duty(PWMA_CH3P_P64, duty_r);
+  190   1      
+  191   1              pwm_duty(PWMA_CH4P_P66, 0);
+  192   1      
+  193   1          }
+  194   1          else
+  195   1          {
+  196   1              pwm_duty(PWMA_CH3P_P64, 0);
+  197   1      
+  198   1              pwm_duty(PWMA_CH4P_P66, 0);
+  199   1          }
+  200   1      }
+*** ERROR C7 IN LINE 200 OF speed_PId.c: compilation aborted
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  14 ERROR(S)

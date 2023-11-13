@@ -1,0 +1,62 @@
+C251 COMPILER V5.60.0,  time                                                               24/04/22  18:48:54  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE time
+OBJECT MODULE PLACED IN .\Out_File\time.obj
+COMPILER INVOKED BY: C:\Keil_v5\C251\BIN\C251.EXE time.c XSMALL INTR2 WARNINGLEVEL(3) BROWSE INCDIR(..\..\Libraries\libr
+                    -aries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRIN
+                    -T(.\Out_File\time.lst) TABS(2) OBJECT(.\Out_File\time.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          #include "time.h"
+    3          
+    4          double start = 0;
+    5          double current = 0;
+    6          double end_time =0;
+    7          double spent = 0;
+    8          double cur = 0;
+    9          
+   10          int Current()
+   11          {
+   12   1      
+   13   1        cur = cur + 1;
+   14   1        
+   15   1        return cur * 5 / 1000 ;
+   16   1      }
+   17          
+   18          void star()
+   19          {
+   20   1        start = 0;
+   21   1        spent = spent + 1;
+   22   1      }
+   23          
+   24          double end()
+   25          {
+   26   1        return spent * 5 / 1000;
+   27   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =        88     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =        20     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        40     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

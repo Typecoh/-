@@ -1,0 +1,14 @@
+C251 COMPILER V5.60.0,  GA                                                                 24/03/22  12:15:40  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE GA
+OBJECT MODULE PLACED IN .\Out_File\GA.obj
+COMPILER INVOKED BY: C:\Keil_v5\C251\BIN\C251.EXE ..\..\..\..\..\GA.c XSMALL INTR2 WARNINGLEVEL(3) BROWSE INCDIR(..\..\L
+                    -ibraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\sr
+                    -c) DEBUG PRINT(.\Out_File\GA.lst) TABS(2) OBJECT(.\Out_File\GA.obj) 
+
+stmt  level    source
+
+*** ERROR C318 OF ..\..\..\..\..\GA.c: can't open file '..\..\..\..\..\GA.c'
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  1 ERROR(S)

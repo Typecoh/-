@@ -1,0 +1,411 @@
+C251 COMPILER V5.60.0,  speed                                                              07/10/22  19:46:41  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE speed
+OBJECT MODULE PLACED IN .\Out_File\speed.obj
+COMPILER INVOKED BY: D:\Keil_v5\C251\BIN\C251.EXE speed.c XSMALL INTR2 WARNINGLEVEL(3) BROWSE INCDIR(..\..\Libraries\lib
+                    -raries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRI
+                    -NT(.\Out_File\speed.lst) TABS(2) OBJECT(.\Out_File\speed.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          #include "speed.h"
+    3          #include "math.h"
+    4          
+    5          int enter_forks_speed = 0;
+    6          
+    7          int in_left_speed = 0;
+    8          
+    9          int in_right_speed = 0;
+   10          
+   11          int in_normall_speed = 0;
+   12          
+   13          int in_cir_speed = 0;
+   14          
+   15          float lb_speed_l[5];
+   16          float lb_speed_r[5];
+   17          
+   18           double speed1;
+   19           double speed2;
+   20           double all_speed;
+   21           
+   22           double all_speed_L;
+   23           double all_speed_R;
+   24           
+   25           double now_speed;
+   26           
+   27           double nowspeed_L;
+   28           double nowspeed_R;
+   29           
+   30           double old_speed;
+   31           
+   32           double duty_L;
+   33           double duty_R;
+   34           double motor_out1;
+   35           double motor_out2;
+   36           double run = 1;
+   37           double temp;
+   38           
+   39           double pidinc1;
+   40           double pidinc2;
+   41          
+   42           double temp_duty_L;
+   43           double temp_duty_R;
+   44          
+   45           double lderror = 0;
+   46           double rderror = 0;
+   47           int i_my = 0;
+   48          
+   49          struct PID1_ {
+   50          
+   51                  double error;
+   52                  double last_error;   //?????
+   53                  double pre_error;    //?????
+   54                  double last_speed;
+   55          
+   56          }pid1;
+   57          
+C251 COMPILER V5.60.0,  speed                                                              07/10/22  19:46:41  PAGE 2   
+
+   58          struct PID2_{
+   59          
+   60                  double error;
+   61                  double last_error;   //?????
+   62                  double pre_error;    //?????
+   63                  double last_speed;
+   64          
+   65          }pid2;
+   66          
+   67          double kp_l = 27, ki_l = 3,  kd_l = 0.05;
+   68          double kp_r = 27, ki_r = 3,  kd_r = 0.05;
+   69          
+   70          void getspeed();
+   71          double PID_Increase1(double ActualSpeed,double SetSpeed);
+   72          double PID_Increase2(double ActualSpeed,double SetSpeed);
+   73          void Motor_rotation_L(int duty_l);
+   74          void Motor_rotation_R(int duty_r);
+   75          double limit_protect(int input,int min,int max);
+   76          void cal_speed();
+   77          
+   78          
+   79          
+   80          void getspeed()
+   81          {
+   82   1       // 获取编码器的值
+   83   1       // 切记 不要将速度 反转
+   84   1       
+   85   1          if(P53 == 1)
+   86   1          {
+   87   2              nowspeed_L = ctimer_count_read(CTIM3_P04);  
+   88   2          }
+   89   1          
+   90   1          else
+   91   1          {
+   92   2              nowspeed_L = -1 * ctimer_count_read(CTIM3_P04);
+   93   2          }
+   94   1          
+   95   1          if(P35 == 0)
+   96   1          {
+   97   2              nowspeed_R = ctimer_count_read(CTIM0_P34);
+   98   2          }
+   99   1          
+  100   1          else
+  101   1          {
+  102   2              nowspeed_R = -1 * ctimer_count_read(CTIM0_P34);
+  103   2          }
+  104   1      
+  105   1          // 将编码器的值清空
+  106   1          ctimer_count_clean(CTIM0_P34);
+  107   1          ctimer_count_clean(CTIM3_P04);  
+  108   1      }
+  109          
+  110          
+  111          double PID_Increase1(double ActualSpeed,double SetSpeed)
+  112          {
+  113   1          double ierror;
+  114   1      
+  115   1          ierror = SetSpeed - ActualSpeed;
+  116   1      
+  117   1              pidinc1 =  kp_l * ( ierror - pid1.last_error )
+  118   1                       + ki_l * ierror
+  119   1                       + kd_l *(ierror - 2 * pid1.last_error + pid1.pre_error);
+  120   1      
+  121   1              pid1.pre_error = pid1.last_error;
+  122   1      
+  123   1              pid1.last_error=ierror;
+C251 COMPILER V5.60.0,  speed                                                              07/10/22  19:46:41  PAGE 3   
+
+  124   1      
+  125   1              pid1.last_speed=ActualSpeed;
+  126   1      
+  127   1              return pidinc1;
+  128   1      }
+  129          
+  130          
+  131          double PID_Increase2(double ActualSpeed,double SetSpeed)
+  132          {
+  133   1          double ierror;
+  134   1      
+  135   1          ierror = SetSpeed - ActualSpeed;
+  136   1      
+  137   1              pidinc2 =  kp_r * ( ierror - pid2.last_error )
+  138   1                       + ki_r * ierror
+  139   1                       + kd_r *(ierror - 2 * pid2.last_error + pid2.pre_error);
+  140   1      
+  141   1              pid2.pre_error=pid2.last_error;
+  142   1      
+  143   1              pid2.last_error=ierror;
+  144   1      
+  145   1              pid2.last_speed=ActualSpeed;
+  146   1      
+  147   1              return pidinc2;
+  148   1      }
+  149          
+  150          void cal_speed()
+  151          {
+  152   1      
+  153   1              
+  154   1      //      int encoder =  (nowspeed_L + nowspeed_R) / 2;
+  155   1      //      motor_out1 += PID_Increase1(encoder,all_speed_L); 
+  156   1      //      motor_out2 += PID_Increase2(encoder,all_speed_R); 
+  157   1      
+  158   1      //      int encoder =  (nowspeed_L + nowspeed_R) / 2;
+  159   1      
+  160   1            if(s_error >= 0)
+  161   1            {
+  162   2                  motor_out1 += PID_Increase1(nowspeed_L,all_speed_L - 0.2 * sqrt(abs(s_error))); 
+  163   2                  motor_out2 += PID_Increase2(nowspeed_R,all_speed_R + 0.2 * sqrt(abs(s_error))); 
+  164   2            }
+  165   1            
+  166   1            else 
+  167   1            {
+  168   2                  motor_out1 += PID_Increase1(nowspeed_L,all_speed_L + 0.27 * sqrt(abs(s_error))); 
+  169   2                  motor_out2 += PID_Increase2(nowspeed_R,all_speed_R - 0.27 * sqrt(abs(s_error))); 
+  170   2            }
+  171   1      //      motor_out1 += PID_Increase1(nowspeed_L,all_speed_L - 0.2 * sqrt(abs(s_error))); 
+  172   1      //      motor_out2 += PID_Increase2(nowspeed_R,all_speed_R + 0.2 * sqrt(abs(s_error))); 
+  173   1            
+  174   1            motor_out1 = limit_protect(motor_out1,-950,950);
+  175   1            motor_out2 = limit_protect(motor_out2,-950,950);
+  176   1            
+  177   1            duty_L = motor_out1 * 10;
+  178   1            duty_R = motor_out2 * 10;
+  179   1        
+  180   1            if(run == 1)
+  181   1            {
+  182   2                Motor_rotation_L(duty_L);
+  183   2      
+  184   2                Motor_rotation_R(duty_R);
+  185   2            }
+  186   1      
+  187   1            else
+  188   1            {
+  189   2            
+C251 COMPILER V5.60.0,  speed                                                              07/10/22  19:46:41  PAGE 4   
+
+  190   2                Motor_rotation_L(0);
+  191   2      
+  192   2                Motor_rotation_R(0);
+  193   2            }
+  194   1      }
+  195          
+  196          void Motor_rotation_R(int duty_l)
+  197          {
+  198   1          if(duty_l < 0)
+  199   1          {
+  200   2              pwm_duty(PWMA_CH1P_P60, -duty_l);
+  201   2      
+  202   2              pwm_duty(PWMA_CH2P_P62, 0);
+  203   2      
+  204   2          }
+  205   1          else if(duty_l > 0 )
+  206   1          {
+  207   2      
+  208   2              pwm_duty(PWMA_CH1P_P60, 0);
+  209   2      
+  210   2              pwm_duty(PWMA_CH2P_P62, duty_l);
+  211   2      
+  212   2          }
+  213   1          else
+  214   1          {
+  215   2              pwm_duty(PWMA_CH1P_P60, 0);
+  216   2      
+  217   2              pwm_duty(PWMA_CH2P_P62, 0);
+  218   2          }
+  219   1      }
+  220          
+  221          void Motor_rotation_L(int duty_r)
+  222          {
+  223   1          if(duty_r < 0)
+  224   1          {
+  225   2      
+  226   2              pwm_duty(PWMA_CH3P_P64, 0);
+  227   2      
+  228   2              pwm_duty(PWMA_CH4P_P66, -duty_r);
+  229   2      
+  230   2          }
+  231   1          else if(duty_r > 0)
+  232   1          {
+  233   2      
+  234   2              pwm_duty(PWMA_CH3P_P64, duty_r);
+  235   2      
+  236   2              pwm_duty(PWMA_CH4P_P66, 0);
+  237   2      
+  238   2          }
+  239   1          else
+  240   1          {
+  241   2              pwm_duty(PWMA_CH3P_P64, 0);                                         
+  242   2      
+  243   2              pwm_duty(PWMA_CH4P_P66, 0);
+  244   2          }
+  245   1      }
+  246          
+  247          double limit_protect(int input,int min,int max)
+  248          {
+  249   1        if(input > max) return max;
+  250   1        
+  251   1        if(input < min) return min;
+  252   1        
+  253   1        return input;
+  254   1      }
+  255          
+C251 COMPILER V5.60.0,  speed                                                              07/10/22  19:46:41  PAGE 5   
+
+  256          void speed_analsy()
+  257          {
+  258   1              
+  259   1              int a = 0;
+  260   1              a = w_angle;
+  261   1              if(a > 100) a = 100;
+  262   1              if(a < -100) a = -100;
+  263   1      
+  264   1      
+  265   1             if(in_forks == 1) {
+  266   2               
+  267   2      //         进岔口减速
+  268   2                all_speed_L = enter_forks_speed;
+  269   2                all_speed_R =  enter_forks_speed;
+  270   2               
+  271   2      //         在左三岔
+  272   2              if(in_forks_left == 1)
+  273   2              {
+  274   3      //         左三岔内
+  275   3      
+  276   3                all_speed_L = in_left_speed;
+  277   3                all_speed_R = in_left_speed ;
+  278   3                
+  279   3              }
+  280   2              
+  281   2              if(in_forks_right == 1)
+  282   2              { 
+  283   3      //        右三岔内
+  284   3      
+  285   3                all_speed_L = in_right_speed ;
+  286   3                all_speed_R = in_right_speed ;
+  287   3                
+  288   3              }
+  289   2            }
+  290   1             
+  291   1            else if(iscir == 1) // 在圆环里
+  292   1            {
+  293   2                all_speed_L = in_cir_speed;
+  294   2                all_speed_R = in_cir_speed;
+  295   2                
+  296   2                if(soon_leave == 1)
+  297   2                {
+  298   3                  all_speed_L  = 65;
+  299   3                  all_speed_R  = 65;
+  300   3                }
+  301   2                
+  302   2            }
+  303   1           
+  304   1      //      在三岔外面       
+  305   1            else if( isend == 0 )
+  306   1            {
+  307   2                all_speed_L = 0;    
+  308   2                all_speed_R = 0;
+  309   2            }
+  310   1            
+  311   1            else 
+  312   1            {
+  313   2            
+  314   2                  if( isend == 0 )
+  315   2                  {
+  316   3                      all_speed_L = 0;    
+  317   3                      all_speed_R = 0;
+  318   3                  }
+  319   2                  
+  320   2                  else
+  321   2                  {
+C251 COMPILER V5.60.0,  speed                                                              07/10/22  19:46:41  PAGE 6   
+
+  322   3                  
+  323   3                      if(next == 1)
+  324   3                      {
+  325   4                        all_speed_L = in_normall_speed - 5;   
+  326   4                        all_speed_R = in_normall_speed - 5;
+  327   4                      }
+  328   3                      
+  329   3                      else 
+  330   3                      {
+  331   4                        all_speed_L = in_normall_speed;   
+  332   4                        all_speed_R = in_normall_speed;
+  333   4                      }
+  334   3                  
+  335   3                        
+  336   3      //                  if(s_error > 0)
+  337   3      //                  {
+  338   3      //                    all_speed_L = in_normall_speed - (int)(0.004 * abs(s_error)) ;
+  339   3      //                    all_speed_R = in_normall_speed + (int)(0.004 * abs(s_error));
+  340   3      //                    
+  341   3      //                  }
+  342   3      //                  
+  343   3      //                  else if(s_error < 0)
+  344   3      //                  {
+  345   3      //                    all_speed_L = in_normall_speed + (int)(0.004 * abs(s_error)) ;
+  346   3      //                    all_speed_R = in_normall_speed - (int)(0.004 * abs(s_error));
+  347   3      //                  }
+  348   3                        
+  349   3      //                  all_speed_L = in_normall_speed - (int)(0.002 * abs(s_error)) ;
+  350   3      //                  all_speed_R = in_normall_speed + (int)(0.002 * abs(s_error));
+  351   3                  }
+  352   2      //      
+  353   2      //            all_speed_L = in_normall_speed - (int)(0.02 * a) ;
+  354   2      //            all_speed_R = in_normall_speed + (int)(0.02 * a);
+  355   2      
+  356   2      //          all_speed_L = in_normall_speed - (int)(0.02 * a) ;
+  357   2      //          all_speed_R = in_normall_speed + (int)(0.02* a);
+  358   2            
+  359   2                all_speed_L = in_normall_speed;   
+  360   2                all_speed_R = in_normall_speed;
+  361   2            }
+  362   1      }
+  363          
+  364          
+  365          
+*** WARNING C183 IN LINE 262 OF speed.c: dead assignment eliminated
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =      1039     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =       192     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =       108     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
